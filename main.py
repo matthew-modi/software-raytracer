@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Python raytracer built from scratch by Matthew Modi, 2020"""
-
+import os
 import random
 import time
 
@@ -25,8 +25,8 @@ from vector3f import Vector3f
 
 def main():
     # User selected constants:
-    WIDTH = 800
-    HEIGHT = 800
+    WIDTH = 200
+    HEIGHT = 200
     FOV = 90
 
     CAMERA_POS = Vector3f(0.0, 0.0, 0.0)
@@ -47,8 +47,8 @@ def main():
 
     print('Rendering...')
     render_start_time = time.time()
-    img = render(WIDTH, HEIGHT, FOV, CAMERA_POS, {'x': CAMERA_X, 'y': CAMERA_Y, 'z': CAMERA_Z}, objects)
-    print('Render Complete: ' + str(time.time()-render_start_time) + 's')
+    img = render(WIDTH, HEIGHT, FOV, CAMERA_POS, {'x': CAMERA_X, 'y': CAMERA_Y, 'z': CAMERA_Z}, objects, True)
+    print('Render Complete: ' + str(time.time() - render_start_time) + 's')
 
     print('Saving...')
     pixels = img.get_pixels()
@@ -59,19 +59,24 @@ def main():
             for color in pixel:
                 row_final.append(int(color * 255))
         pixels_final.append(row_final)
-    file_name = time.strftime('output/%y-%m-%d-%H-%M-%S') + '.png'
-    file = open(file_name, 'wb')
+    output_folder = 'output'
+    file_name = time.strftime('%y-%m-%d-%H-%M-%S') + '.png'
+    file = open(output_folder + '/' + file_name, 'wb')
     png.Writer(WIDTH, HEIGHT, greyscale=False).write(file, pixels_final)
     file.close()
+    print(' Saved: \n ' + os.path.dirname(os.path.realpath(__file__)) + '\\' + output_folder + '\\' + file_name)
 
     print('Displaying...')
     # plt.imshow(img.get_pixels())
     # plt.show()
 
-    pil.Image.open(file_name).show()
+    pil.Image.open(output_folder + '/' + file_name).show()
 
 
-def render(WIDTH, HEIGHT, fov_degrees, CAMERA_POS, camera_axes, objects) -> Image:
+def render(WIDTH: int, HEIGHT: int, FOV_DEGREES: float = 90.0, CAMERA_POS: Vector3f = Vector3f(),
+           CAMERA_AXES: dict = {'x': Vector3f(x=1.0), 'y': Vector3f(y=1.0), 'z': Vector3f(z=1.0)},
+           objects: list = [], LOG: bool = False) -> Image:
+    if LOG: print(' Pre-Processing...')
     # Generated constants:
     ASPECT_RATIO = WIDTH / HEIGHT
     if ASPECT_RATIO >= 1:
@@ -80,11 +85,11 @@ def render(WIDTH, HEIGHT, fov_degrees, CAMERA_POS, camera_axes, objects) -> Imag
         WIDTH_DOMINANT = 0
     ASPECT_RATIO = Vector2f((ASPECT_RATIO ** WIDTH_DOMINANT), (ASPECT_RATIO ** (1 - WIDTH_DOMINANT)))
 
-    FOV = fov_degrees * math.pi / 180
+    FOV = FOV_DEGREES * math.pi / 180
 
-    CAMERA_X = camera_axes['x']
-    CAMERA_Y = camera_axes['y']
-    CAMERA_Z = camera_axes['z']
+    CAMERA_X = CAMERA_AXES['x']
+    CAMERA_Y = CAMERA_AXES['y']
+    CAMERA_Z = CAMERA_AXES['z']
 
     CAMERA_ORIENTATION_MATRIX = np.array([[0.0], [0.0], [0.0]])
     CAMERA_ORIENTATION_MATRIX = np.concatenate((CAMERA_ORIENTATION_MATRIX, np.rot90(np.array([CAMERA_X.raw()]), 3)),
@@ -101,8 +106,10 @@ def render(WIDTH, HEIGHT, fov_degrees, CAMERA_POS, camera_axes, objects) -> Imag
 
     img = Image(WIDTH, HEIGHT)
 
-    pixel_set = [(WIDTH, HEIGHT, FOV, CAMERA_POS, CAMERA_ORIENTATION_MATRIX, ASPECT_RATIO, objects, x, y)for y in range(HEIGHT) for x in range(WIDTH) ]
+    pixel_set = [(WIDTH, HEIGHT, FOV, CAMERA_POS, CAMERA_ORIENTATION_MATRIX, ASPECT_RATIO, objects, x, y) for y in
+                 range(HEIGHT) for x in range(WIDTH)]
 
+    if LOG: print(' Ray-Tracing...')
     data_set = []
     with Pool(processes=multiprocessing.cpu_count()) as pool:
         data_set = pool.starmap(render_pixel, pixel_set)
@@ -114,7 +121,9 @@ def render(WIDTH, HEIGHT, fov_degrees, CAMERA_POS, camera_axes, objects) -> Imag
             i += 1
     return img
 
-def render_pixel(WIDTH, HEIGHT, FOV, CAMERA_POS, CAMERA_ORIENTATION_MATRIX, ASPECT_RATIO, objects, x, y):
+
+def render_pixel(WIDTH: int, HEIGHT: int, FOV: float, CAMERA_POS: Vector3f, CAMERA_ORIENTATION_MATRIX: np.matrix,
+                 ASPECT_RATIO: Vector2f, objects: list, x: int, y: int):
     pixel_x = (2 * ((x + 0.5) / WIDTH) - 1) * math.tan(FOV / 2) * ASPECT_RATIO.x
     pixel_y = (1 - 2 * ((y + 0.5) / HEIGHT)) * math.tan(FOV / 2) * ASPECT_RATIO.y
     pixel_pos = (CAMERA_ORIENTATION_MATRIX.dot(np.array([[pixel_x], [pixel_y], [-1]])))
@@ -123,6 +132,7 @@ def render_pixel(WIDTH, HEIGHT, FOV, CAMERA_POS, CAMERA_ORIENTATION_MATRIX, ASPE
 
     color = cast_ray(primary_ray, objects).raw()
     return color
+
 
 def cast_ray(ray: Ray, objects: list) -> Color:
     hit_color = Color()
