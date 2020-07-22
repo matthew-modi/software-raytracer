@@ -10,6 +10,8 @@ from multiprocessing import Pool
 import PIL as pil
 import png
 import numpy as np
+
+from box import Box
 from image import Image
 from color import Color
 from plane import Plane

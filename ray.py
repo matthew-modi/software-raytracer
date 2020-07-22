@@ -4,7 +4,7 @@ from vector3f import Vector3f
 class Ray:
     def __init__(self, origin: Vector3f, direction: Vector3f):
         self.origin = origin
-        self.direction = direction
+        self.direction = direction.normalize()
 
     def __str__(self):
         return self.__repr__()
