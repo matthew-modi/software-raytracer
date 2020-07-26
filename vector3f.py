@@ -1,5 +1,7 @@
 import math
 
+import numpy
+
 
 class Vector3f:
     """Three element vector"""
@@ -41,6 +43,11 @@ class Vector3f:
 
     def dot(self, other):
         return self.x * other.x + self.y * other.y + self.z * other.z
+
+    def cross(self, other):
+        return Vector3f(self.y * other.z - self.z * other.y,
+                        self.z * other.x - self.x * other.z,
+                        self.x * other.y - self.y * other.x)
 
     def normalize(self):
         return self / self.magnitude()

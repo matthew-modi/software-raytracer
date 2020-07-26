@@ -19,6 +19,7 @@ from ray import Ray
 import math
 
 from sphere import Sphere
+from triangle import Triangle
 from vector2f import Vector2f
 from vector3f import Vector3f
 
@@ -43,7 +44,8 @@ def main():
     #     objects.append(Sphere(pos, radius, color))
 
     objects = [Sphere(Vector3f(0.0, 0.0, -6.0), 1.8, Color(random.uniform(0, 1), 0.5, 1.0, type='hsv')),
-               Plane(Vector3f(0.0, -2.0, 0.0), Vector3f(0.0, 1.0, 0.0))]
+               Plane(Vector3f(0.0, -2.0, 0.0), Vector3f(0.0, 1.0, 0.0)),
+               Triangle(Vector3f(-0.5, -0.5, -3.0), Vector3f(0.5, -0.5, -3.0), Vector3f(0.0, 0.5, -3.0))]
 
     print('Rendering...')
     render_start_time = time.time()
@@ -75,8 +77,9 @@ def main():
 
 def render(WIDTH: int, HEIGHT: int, FOV_DEGREES: float = 90.0, CAMERA_POS: Vector3f = Vector3f(),
            CAMERA_AXES: dict = {'x': Vector3f(x=1.0), 'y': Vector3f(y=1.0), 'z': Vector3f(z=1.0)},
-           objects: list = [], LOG: bool = False) -> Image:
+           objects: list = None, LOG: bool = False) -> Image:
     if LOG: print(' Pre-Processing...')
+
     # Generated constants:
     ASPECT_RATIO = WIDTH / HEIGHT
     if ASPECT_RATIO >= 1:
@@ -110,7 +113,6 @@ def render(WIDTH: int, HEIGHT: int, FOV_DEGREES: float = 90.0, CAMERA_POS: Vecto
                  range(HEIGHT) for x in range(WIDTH)]
 
     if LOG: print(' Ray-Tracing...')
-    data_set = []
     with Pool(processes=multiprocessing.cpu_count()) as pool:
         data_set = pool.starmap(render_pixel, pixel_set)
 

@@ -7,7 +7,7 @@ import numpy as np
 
 
 class Sphere:
-    def __init__(self, center: Vector3f, radius: int, color: Color = Color(1.0, 1.0, 1.0)):
+    def __init__(self, center: Vector3f, radius: float, color: Color = Color(1.0, 1.0, 1.0)):
         self.center = center
         self.radius = radius
         self.radius_sq = radius ** 2
