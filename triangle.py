@@ -8,7 +8,7 @@ class Triangle:
         self.a = a
         self.b = b
         self.c = c
-        self.normal = ((b - a).cross(c - a)).normalize()
+        self.normal = ((b - a).cross(c - a))
         self.area_sq = self.normal.magnitude()
         self.color = color
         self.single_sided = single_sided
@@ -30,7 +30,7 @@ class Triangle:
         d = self.normal.dot(self.a)
         t = (self.normal.dot(ray.origin) + d) / normal_dot
 
-        p_hit = ray.origin + t*ray.direction
+        p_hit = ray.origin + t * ray.direction
 
         if self.normal.dot((self.b - self.a).cross(p_hit - self.a)) < 0:
             return -1.0
