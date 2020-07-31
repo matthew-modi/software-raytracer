@@ -44,4 +44,4 @@ class Triangle:
         return t
 
     def get_surface_data(self, hit_pos):
-        return {'normal': self.normal, 'texture': Vector2f()}
+        return {'normal': self.normal.normalize(), 'texture': Vector2f()}

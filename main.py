@@ -26,8 +26,8 @@ from vector3f import Vector3f
 
 def main():
     # User selected constants:
-    WIDTH = 800
-    HEIGHT = 800
+    WIDTH = 200
+    HEIGHT = 200
     FOV = 90
 
     CAMERA_POS = Vector3f(0.0, 0.0, 0.0)
