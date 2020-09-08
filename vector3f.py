@@ -15,7 +15,7 @@ class Vector3f:
         return self.__repr__()
 
     def __repr__(self):
-        return self.__class__.__name__ + "({}, {}, {})".format(self.x, self.y, self.z)
+        return self.__class__.__name__ + "<{}, {}, {}>".format(self.x, self.y, self.z)
 
     def __mul__(self, other):
         if isinstance(other, Vector3f):

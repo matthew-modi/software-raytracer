@@ -10,6 +10,7 @@ from multiprocessing import Pool
 import PIL as pil
 import png
 import numpy as np
+import tqdm
 
 from box import Box
 from image import Image

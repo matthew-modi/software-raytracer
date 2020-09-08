@@ -12,7 +12,7 @@ class Vector2f:
         return self.__repr__()
 
     def __repr__(self):
-        return self.__class__.__name__ + "({}, {})".format(self.x, self.y)
+        return self.__class__.__name__ + "<{}, {}>".format(self.x, self.y)
 
     def __mul__(self, other):
         if isinstance(other, Vector2f):
