@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 """Python raytracer built from scratch by Matthew Modi, 2020"""
+
+# Built-in modules
 import os
 import random
 import time
+import math
 
+# External modules
 import matplotlib.pyplot as plt
 import multiprocessing
 from multiprocessing import Pool
@@ -12,13 +16,12 @@ import png
 import numpy as np
 import tqdm
 
+# Internal classes
 from box import Box
 from image import Image
 from color import Color
 from plane import Plane
 from ray import Ray
-import math
-
 from sphere import Sphere
 from triangle import Triangle
 from vector2f import Vector2f
@@ -27,7 +30,7 @@ from vector3f import Vector3f
 
 def main():
     # User selected constants:
-    WIDTH = 200
+    WIDTH = 200 # Width of image in pixels
     HEIGHT = 200
     FOV = 90
 
@@ -36,17 +39,13 @@ def main():
     CAMERA_Y = Vector3f(0.0, 1.0, 0.0).normalize()
     CAMERA_Z = Vector3f(0.0, 0.0, 1.0).normalize()
 
-    # objects = []
-    # num_spheres = 7
-    # for i in range(num_spheres):
-    #     pos = Vector3f(random.uniform(-3, 3), random.uniform(-3, 3), random.uniform(-5, -10))
-    #     radius = random.uniform(0.5, 1)
-    #     color = Color(random.uniform(0, 1), 0.5, 1.0, type='hsv')
-    #     objects.append(Sphere(pos, radius, color))
-
-    objects = [Sphere(Vector3f(0.0, 0.0, -6.0), 1.8, Color(random.uniform(0, 1), 0.5, 1.0, type='hsv')),
-               Plane(Vector3f(0.0, -2.0, 0.0), Vector3f(0.0, 1.0, 0.0)),
-               Triangle(Vector3f(-1.5, -0.5, -6.0), Vector3f(1.5, -0.5, -6.0), Vector3f(0.0, 3.5, -4.0))]
+    objects = []
+    num_spheres = 7
+    for i in range(num_spheres):
+        pos = Vector3f(random.uniform(-3, 3), random.uniform(-3, 3), random.uniform(-5, -10))
+        radius = random.uniform(0.5, 1)
+        color = Color(random.uniform(0, 1), 0.5, 1.0, type='hsv')
+        objects.append(Sphere(pos, radius, color))
 
     print('Rendering...')
     render_start_time = time.time()
@@ -80,6 +79,11 @@ def main():
 def render(WIDTH: int, HEIGHT: int, FOV_DEGREES: float = 90.0, CAMERA_POS: Vector3f = Vector3f(),
            CAMERA_AXES: dict = {'x': Vector3f(x=1.0), 'y': Vector3f(y=1.0), 'z': Vector3f(z=1.0)},
            objects: list = None, LOG: bool = False) -> Image:
+    """
+    Render a ray-traced image based on input parameters, return an Image object.
+
+    :WIDTH : 
+    """
     if LOG: print(' Pre-Processing...')
 
     # Generated constants:
