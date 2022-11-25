@@ -30,8 +30,8 @@ from vector3f import Vector3f
 
 def main():
     # User selected constants:
-    WIDTH = 200 # Width of image in pixels
-    HEIGHT = 200
+    WIDTH = 1920 # Width of image in pixels
+    HEIGHT = 1080
     FOV = 90
 
     CAMERA_POS = Vector3f(0.0, 0.0, 0.0)
@@ -115,7 +115,7 @@ def render(WIDTH: int, HEIGHT: int, FOV_DEGREES: float = 90.0, CAMERA_POS: Vecto
 
     img = Image(WIDTH, HEIGHT)
 
-    pixel_set = [(WIDTH, HEIGHT, FOV, CAMERA_POS, CAMERA_ORIENTATION_MATRIX, ASPECT_RATIO, objects, x, y) for y in
+    pixel_set = [(WIDTH, HEIGHT, FOV, CAMERA_POS, CAMERA_ORIENTATION_MATRIX, ASPECT_RATIO, objects, x, y, LOG) for y in
                  range(HEIGHT) for x in range(WIDTH)]
 
     cpu_count = multiprocessing.cpu_count()
@@ -133,7 +133,7 @@ def render(WIDTH: int, HEIGHT: int, FOV_DEGREES: float = 90.0, CAMERA_POS: Vecto
 
 
 def render_pixel(WIDTH: int, HEIGHT: int, FOV: float, CAMERA_POS: Vector3f, CAMERA_ORIENTATION_MATRIX: np.matrix,
-                 ASPECT_RATIO: Vector2f, objects: list, x: int, y: int):
+                 ASPECT_RATIO: Vector2f, objects: list, x: int, y: int, LOG: bool = False):
     pixel_x = (2 * ((x + 0.5) / WIDTH) - 1) * math.tan(FOV / 2) * ASPECT_RATIO.x
     pixel_y = (1 - 2 * ((y + 0.5) / HEIGHT)) * math.tan(FOV / 2) * ASPECT_RATIO.y
     pixel_pos = (CAMERA_ORIENTATION_MATRIX.dot(np.array([[pixel_x], [pixel_y], [-1]])))
@@ -141,6 +141,7 @@ def render_pixel(WIDTH: int, HEIGHT: int, FOV: float, CAMERA_POS: Vector3f, CAME
     primary_ray = Ray(CAMERA_POS, ray_direction)
 
     color = cast_ray(primary_ray, objects).raw()
+    # print(' Pixel ' + str(x) + ', ' + str(y) + ' rendered', flush=True) doesn't work
     return color
 
 
