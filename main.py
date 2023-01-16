@@ -14,7 +14,6 @@ from multiprocessing import Pool
 import PIL as pil
 import png
 import numpy as np
-import tqdm
 
 # Internal classes
 from box import Box
@@ -30,8 +29,8 @@ from vector3f import Vector3f
 
 def main():
     # User selected constants:
-    WIDTH = 1920 # Width of image in pixels
-    HEIGHT = 1080
+    WIDTH = 50 # Width of image in pixels
+    HEIGHT = 50
     FOV = 90
 
     CAMERA_POS = Vector3f(0.0, 0.0, 0.0)
@@ -46,6 +45,7 @@ def main():
         radius = random.uniform(0.5, 1)
         color = Color(random.uniform(0, 1), 0.5, 1.0, type='hsv')
         objects.append(Sphere(pos, radius, color))
+    objects.append(Plane(Vector3f(0.0, 0.0, -5.0), Vector3f(0.0, 0.0, 1.0), Color(235, 64, 52, type='rgb')))
 
     print('Rendering...')
     render_start_time = time.time()
